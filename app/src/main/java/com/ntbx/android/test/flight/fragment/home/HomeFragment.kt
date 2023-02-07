@@ -15,16 +15,7 @@ import com.ntbx.android.test.flight.databinding.FragmentHomeBinding
 import com.ntbx.android.test.flight.fragment.appList.AppListFragment
 import java.io.File
 
-class HomeFragment : Fragment(), IHomeFragment {
-
-    companion object {
-        @JvmStatic
-        lateinit var homeFragment: IHomeFragment
-    }
-
-    init {
-        homeFragment = this
-    }
+class HomeFragment : Fragment(){
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var homeAdapter: HomeAdapter
@@ -40,17 +31,13 @@ class HomeFragment : Fragment(), IHomeFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         homeAdapter = HomeAdapter()
-        val env = listOf("gamma", "dev", "uat")
-        binding.recycleview.adapter = homeAdapter
-        binding.recycleview.layoutManager = GridLayoutManager(requireContext(), 1)
+        val appName = listOf("consumer", "internal", "other")
+        binding.recycleView.adapter = homeAdapter
+        binding.recycleView.layoutManager = GridLayoutManager(requireContext(), 1)
         binding.btnInfo.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToInfoFragment())
         }
-        homeAdapter.submitList(env)
-    }
-
-    override fun goToAppList(env: String) {
-        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAppListFragment(env))
+        homeAdapter.submitList(appName)
     }
 
     override fun onResume() {

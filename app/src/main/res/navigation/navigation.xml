@@ -11,11 +11,14 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_homeFragment_to_appListFragment"
-            app:destination="@id/appListFragment" />
+            android:id="@+id/action_homeFragment_to_envListFragment"
+            app:destination="@id/envListFragment" />
         <action
             android:id="@+id/action_homeFragment_to_infoFragment"
             app:destination="@id/infoFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_appListFragment"
+            app:destination="@id/appListFragment" />
     </fragment>
     <fragment
         android:id="@+id/appListFragment"
@@ -31,4 +34,16 @@
         android:name="com.ntbx.android.test.flight.fragment.information.InfoFragment"
         android:label="fragment_info"
         tools:layout="@layout/fragment_info" />
+    <fragment
+        android:id="@+id/envListFragment"
+        android:name="com.ntbx.android.test.flight.fragment.envList.EnvListFragment"
+        android:label="fragment_env_list"
+        tools:layout="@layout/fragment_env_list" >
+        <action
+            android:id="@+id/action_envListFragment_to_appListFragment"
+            app:destination="@id/appListFragment" />
+        <argument
+            android:name="appName"
+            app:argType="string" />
+    </fragment>
 </navigation>

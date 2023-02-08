@@ -5,15 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ntbx.android.test.flight.R
 import com.ntbx.android.test.flight.databinding.FragmentEnvListBinding
 import com.ntbx.android.test.flight.fragment.appList.AppListFragment
+import com.ntbx.android.test.flight.fragment.appList.AppListFragmentArgs
+import com.ntbx.android.test.flight.models.Key
 
 
 class EnvListFragment : Fragment() {
     private lateinit var binding: FragmentEnvListBinding
     lateinit var envListAdapter: EnvListAdapter
+    private val args: EnvListFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,14 +30,23 @@ class EnvListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         envListAdapter = EnvListAdapter()
-        val envName = listOf("gamma", "dev", "uat")
+        binding.txtTitle.text = args.appName
         binding.recycleview.adapter = envListAdapter
         binding.recycleview.layoutManager = GridLayoutManager(requireContext(), 1)
-        envListAdapter.submitList(envName)
+        setDataEnv()
 
         binding.btnBack.setOnClickListener {
             requireActivity().onBackPressed()
         }
+    }
+
+    fun setDataEnv() {
+        val data: MutableList<Key> = mutableListOf()
+        val envName = listOf("gamma", "dev", "uat")
+        envName.forEach { env ->
+            data.add(Key(appName = args.appName, env = env))
+        }
+        envListAdapter.submitList(data)
     }
 
     override fun onResume() {

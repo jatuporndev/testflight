@@ -7,33 +7,34 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ntbx.android.test.flight.databinding.CardEnvBinding
-import com.ntbx.android.test.flight.fragment.home.HomeAdapter
-import com.ntbx.android.test.flight.util.Util.getIconApp
+import com.ntbx.android.test.flight.models.Key
 
-class EnvListAdapter : ListAdapter<String, HomeAdapter.ViewHolder>(HomeAdapter.MyDiffItemCallback()) {
+class EnvListAdapter : ListAdapter<Key, EnvListAdapter.ViewHolder>(MyDiffItemCallback()) {
     class ViewHolder(val binding: CardEnvBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAdapter.ViewHolder {
-        return HomeAdapter.ViewHolder(CardEnvBinding.inflate(LayoutInflater.from(parent.context)))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(CardEnvBinding.inflate(LayoutInflater.from(parent.context)))
     }
 
-    override fun onBindViewHolder(holder: HomeAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = getItem(position)
         holder.binding.apply {
-            envName.text = data
+            envName.text = data.env
         }
 
         holder.itemView.setOnClickListener {
-            it.findNavController().navigate(EnvListFragmentDirections.actionEnvListFragmentToAppListFragment(data))
+            val key = "${data.appName} / ${data.env}"
+            it.findNavController()
+                .navigate(EnvListFragmentDirections.actionEnvListFragmentToAppListFragment(key))
         }
     }
 
-    internal class MyDiffItemCallback : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+    internal class MyDiffItemCallback : DiffUtil.ItemCallback<Key>() {
+        override fun areItemsTheSame(oldItem: Key, newItem: Key): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+        override fun areContentsTheSame(oldItem: Key, newItem: Key): Boolean {
             return oldItem == newItem
         }
     }

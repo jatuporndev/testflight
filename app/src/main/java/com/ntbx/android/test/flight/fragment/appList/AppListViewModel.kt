@@ -22,7 +22,7 @@ class AppListViewModel : ViewModel() {
     val appList: LiveData<Resource<List<AppList>>>
         get() = _appList
 
-    fun getApp(context: Context, env: String) {
+    fun getApp(env: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _appList.postValue(Resource.Loading())
             val storage = FirebaseStorage.getInstance()
@@ -35,7 +35,6 @@ class AppListViewModel : ViewModel() {
                 if(listResult.items.isNotEmpty()){
                     val totalItems = listResult.items.size
                     listResult.items.forEach { item ->
-                        val isUpdate = File(context.getExternalFilesDir(null), item.name).exists()
                         item.downloadUrl.addOnSuccessListener { uri ->
                             val downloadUrl = uri.toString()
                             item.metadata.addOnSuccessListener { metadata ->
@@ -44,7 +43,6 @@ class AppListViewModel : ViewModel() {
                                     AppList(
                                         appName = item.name,
                                         appUrl = downloadUrl,
-                                        isUpdate = isUpdate,
                                         sizeBytes = sizeBytes
                                     )
                                 )

@@ -27,7 +27,7 @@ class HomeAdapter : ListAdapter<String,HomeAdapter.ViewHolder>(MyDiffItemCallbac
         }
 
         holder.itemView.setOnClickListener {
-            if(data != "other"){
+            if(data != "Other"){
                 it.findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToEnvListFragment(data))
             }else {
                 it.findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAppListFragment(data))

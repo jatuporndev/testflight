@@ -20,6 +20,7 @@ import com.ntbx.android.test.flight.customView.HandleUpdateSheet
 import com.ntbx.android.test.flight.databinding.FragmentAppListBinding
 import com.ntbx.android.test.flight.fragment.models.AppList
 import com.ntbx.android.test.flight.util.Resource
+import com.ntbx.android.test.flight.util.Util.formatKey
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -51,15 +52,15 @@ class AppListFragment : Fragment(), IAppListFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        appListAdapter = AppListAdapter()
-        binding.txtTitle.text = args.env
+        appListAdapter = AppListAdapter(requireContext())
+        binding.txtTitle.text = args.key
         binding.recycleview.adapter = appListAdapter
         binding.recycleview.layoutManager = GridLayoutManager(requireContext(), 1)
 
         binding.btnBack.setOnClickListener {
             requireActivity().onBackPressed()
         }
-        appViewModel.getApp(requireContext(), args.env)
+        appViewModel.getApp(formatKey(args.key))
         observer()
     }
 
@@ -93,19 +94,6 @@ class AppListFragment : Fragment(), IAppListFragment {
         request.setDestinationInExternalFilesDir(context, null, appName)
         val apkFile = File(requireContext().getExternalFilesDir(null), appName)
         if (apkFile.exists()) {
-//            bottomSheet = HandleUpdateSheet(requireContext())
-//            bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
-//            bottomSheet.onInstallButtonClick(object : HandleUpdateSheet.ClickListener {
-//                override fun click() {
-//                    installApp(apkFile)
-//                    bottomSheet.dismiss()
-//                }
-//            })
-//            bottomSheet.onUpdateButtonClick(object : HandleUpdateSheet.ClickListener {
-//                override fun click() {
-//                    bottomSheet.dismiss()
-//                }
-//            })
             if (apkFile.delete()) {
                 println("old file deleted")
             }
@@ -160,7 +148,7 @@ class AppListFragment : Fragment(), IAppListFragment {
         downloadManager.remove(downloadId)
     }
 
-    private fun installApp(apkFile: File) {
+    override fun installApp(apkFile: File) {
         try {
             val apkUri = FileProvider.getUriForFile(
                 requireContext(),

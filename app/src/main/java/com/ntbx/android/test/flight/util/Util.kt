@@ -6,14 +6,17 @@ import java.math.RoundingMode
 object Util {
 
     fun getSizeMb(sizeBytes: Long): String {
-        return (sizeBytes.toDouble() / (1024 * 1024)).toBigDecimal().setScale(2, RoundingMode.HALF_EVEN).toString()
+        return (sizeBytes.toDouble() / (1024 * 1024)).toBigDecimal()
+            .setScale(2, RoundingMode.HALF_EVEN).toString()
     }
 
     fun getIconApp(appName: String): Int {
-        return when (appName) {
+        return when (appName.lowercase()) {
             "consumer" -> R.drawable.ic_consumer_icon
             "internal" -> R.drawable.ic_internal
             else -> R.drawable.ic_baseline_more_horiz_24
         }
     }
+
+    fun formatKey(key: String) = key.filterNot { it.isWhitespace() }.lowercase()
 }

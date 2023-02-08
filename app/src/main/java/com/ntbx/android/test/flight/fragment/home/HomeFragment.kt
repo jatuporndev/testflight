@@ -31,7 +31,7 @@ class HomeFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         homeAdapter = HomeAdapter()
-        val appName = listOf("consumer", "internal", "other")
+        val appName = listOf("Consumer", "Internal", "Other")
         binding.recycleView.adapter = homeAdapter
         binding.recycleView.layoutManager = GridLayoutManager(requireContext(), 1)
         binding.btnInfo.setOnClickListener {

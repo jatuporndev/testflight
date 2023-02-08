@@ -26,7 +26,7 @@
         android:label="fragment_app_list"
         tools:layout="@layout/fragment_app_list" >
         <argument
-            android:name="env"
+            android:name="key"
             app:argType="string" />
     </fragment>
     <fragment

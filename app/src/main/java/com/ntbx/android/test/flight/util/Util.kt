@@ -2,6 +2,8 @@ package com.ntbx.android.test.flight.util
 
 import com.ntbx.android.test.flight.R
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
+import java.util.*
 
 object Util {
 
@@ -19,4 +21,10 @@ object Util {
     }
 
     fun formatKey(key: String) = key.filterNot { it.isWhitespace() }.lowercase()
+
+    fun getFormatTime(milliseconds: Long): String {
+        val currentDate = Date(milliseconds)
+        val timeZoneDate = SimpleDateFormat("dd/MM/yyyy", Locale("en"))
+        return timeZoneDate.format(currentDate)
+    }
 }

@@ -17,7 +17,8 @@ import com.ntbx.android.test.flight.util.Util
 import java.io.File
 
 
-class AppListAdapter(val context: Context) : ListAdapter<AppList, AppListAdapter.ViewHolder>(MyDiffItemCallback()) {
+class AppListAdapter(val context: Context) :
+    ListAdapter<AppList, AppListAdapter.ViewHolder>(MyDiffItemCallback()) {
     private val appListFragment = AppListFragment.appListFragment
 
     class ViewHolder(val binding: CardAppListV2Binding) : RecyclerView.ViewHolder(binding.root)
@@ -30,28 +31,28 @@ class AppListAdapter(val context: Context) : ListAdapter<AppList, AppListAdapter
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = getItem(position)
         val apkFile = File(context.getExternalFilesDir(null), data.appName)
+        val sizeMb = Util.getSizeMb(data.sizeBytes)
         holder.binding.apply {
             viewFlipper.displayedChild = 0
             appName.text = data.appName
             txtDate.text = data.createDate
-            if(data.appName.endsWith(".apk")) {
-                if(apkFile.exists()){
+            if (data.appName.endsWith(".apk")) {
+                if (apkFile.exists()) {
                     btnDownload.text = "Update"
-                    iconAndroid.setImageResource(R.drawable.ic_baseline_android_green)
-                    dowloadStatus.visibility = View.VISIBLE
-                    btnInstall.visibility = View.VISIBLE
                     dowloadStatus.text = "Downloaded"
-                }else{
+                    iconAndroid.setImageResource(R.drawable.ic_baseline_android_green)
+                    updateUI(holder.binding, DownloadState.DOWNLOADED)
+                } else {
                     btnDownload.text = "GET"
+                    dowloadStatus.text = "$sizeMb MB"
                     iconAndroid.setImageResource(R.drawable.ic_baseline_android_24)
                 }
-            }else {
+            } else {
                 iconAndroid.setImageResource(R.drawable.ic_baseline_block_24)
                 btnDownload.isEnabled = false
                 btnInstall.isEnabled = false
             }
 
-            val sizeMb = Util.getSizeMb(data.sizeBytes)
             btnDownload.setOnClickListener {
                 appListFragment.downloadFile(
                     url = data.appUrl,
@@ -59,7 +60,6 @@ class AppListAdapter(val context: Context) : ListAdapter<AppList, AppListAdapter
                 ) { progress ->
                     updateUI(holder.binding, DownloadState.DOWNLOADING)
                     dowloadStatus.text = "${progress}% of $sizeMb MB"
-                    dowloadStatus.visibility = View.VISIBLE
                     if (progress > 99) {
                         updateUI(holder.binding, DownloadState.INSTALL)
                         notifyItemChanged(position)
@@ -87,14 +87,16 @@ class AppListAdapter(val context: Context) : ListAdapter<AppList, AppListAdapter
             DownloadState.INSTALL -> {
                 binding.viewFlipper.displayedChild = 0
                 binding.loading.visibility = View.GONE
-                binding.dowloadStatus.visibility = View.GONE
             }
             DownloadState.DOWNLOADING -> {
                 binding.viewFlipper.displayedChild = 1
                 binding.loading.visibility = View.VISIBLE
                 binding.btnInstall.visibility = View.GONE
             }
-            DownloadState.UPDATE -> {}
+            DownloadState.DOWNLOADED -> {
+                binding.btnInstall.visibility = View.VISIBLE
+                binding.downloadedIcon.visibility = View.VISIBLE
+            }
         }
     }
 

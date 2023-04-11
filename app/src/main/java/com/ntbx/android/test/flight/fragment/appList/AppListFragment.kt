@@ -16,7 +16,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
-import com.ntbx.android.test.flight.customView.HandleUpdateSheet
 import com.ntbx.android.test.flight.databinding.FragmentAppListBinding
 import com.ntbx.android.test.flight.fragment.models.AppList
 import com.ntbx.android.test.flight.util.Resource
@@ -38,7 +37,6 @@ class AppListFragment : Fragment(), IAppListFragment {
     private val args: AppListFragmentArgs by navArgs()
     private lateinit var binding: FragmentAppListBinding
     private lateinit var appListAdapter: AppListAdapter
-    lateinit var bottomSheet : HandleUpdateSheet
     private val appViewModel: AppListViewModel by viewModels()
     lateinit var downloadManager: DownloadManager
     override fun onCreateView(
@@ -51,7 +49,8 @@ class AppListFragment : Fragment(), IAppListFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        downloadManager =
+            requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         appListAdapter = AppListAdapter(requireContext())
         binding.txtTitle.text = args.key
         binding.recycleview.adapter = appListAdapter
@@ -69,9 +68,9 @@ class AppListFragment : Fragment(), IAppListFragment {
             when (it) {
                 is Resource.Loading -> binding.viewFlipper.displayedChild = 0
                 is Resource.Success -> {
-                    if (it.data!!.isNotEmpty()) {
-                        binding.viewFlipper.displayedChild = 1
+                    if (it.data?.isNotEmpty() == true) {
                         appListAdapter.submitList(it.data)
+                        binding.viewFlipper.displayedChild = 1
                     } else {
                         binding.viewFlipper.displayedChild = 2
                     }
@@ -98,50 +97,50 @@ class AppListFragment : Fragment(), IAppListFragment {
                 println("old file deleted")
             }
         }
-            onProgress?.invoke(0)
-            CoroutineScope(Dispatchers.IO).launch {
-                val downloadId = downloadManager.enqueue(request)
-                val updateObserve = Observer<Resource<List<AppList>>> { data ->
-                    data.data?.find { it.appName == appName }?.downLoadId = downloadId
-                }
-                withContext(Dispatchers.Main) {
-                    appViewModel.appList.observe(viewLifecycleOwner, updateObserve)
-                    appViewModel.appList.removeObserver(updateObserve)
-                }
-
-                var lastDownloadProgress = -1f
-                while (true) {
-                    val query = DownloadManager.Query().setFilterById(downloadId)
-                    val cursor = downloadManager.query(query)
-                    if (cursor.moveToFirst()) {
-                        val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-                        val bytesDownloaded =
-                            cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-                        val bytesTotal =
-                            cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-                        val downloadProgress = ((bytesDownloaded * 100f) / bytesTotal)
-                        if (downloadProgress != lastDownloadProgress) {
-                            lastDownloadProgress = downloadProgress
-                            withContext(Dispatchers.Main) {
-                                onProgress?.invoke(downloadProgress.toInt())
-                            }
-                        }
-                        if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                            withContext(Dispatchers.Main) {
-                                onProgress?.invoke(100)
-                            }
-                            break
-                        } else if (status == DownloadManager.STATUS_FAILED) {
-                            Toast.makeText(requireContext(), "fail, try again!", Toast.LENGTH_SHORT).show()
-                            break
-                        }
-                        delay(1000)
-                    }
-                    cursor.close()
-                }
-                withContext(Dispatchers.Main) { installApp(apkFile) }
+        onProgress?.invoke(0)
+        CoroutineScope(Dispatchers.IO).launch {
+            val downloadId = downloadManager.enqueue(request)
+            val updateObserve = Observer<Resource<List<AppList>>> { data ->
+                data.data?.find { it.appName == appName }?.downLoadId = downloadId
+            }
+            withContext(Dispatchers.Main) {
+                appViewModel.appList.observe(viewLifecycleOwner, updateObserve)
+                appViewModel.appList.removeObserver(updateObserve)
             }
 
+            var lastDownloadProgress = -1f
+            while (true) {
+                val query = DownloadManager.Query().setFilterById(downloadId)
+                val cursor = downloadManager.query(query)
+                if (cursor.moveToFirst()) {
+                    val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                    val bytesDownloaded =
+                        cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                    val bytesTotal =
+                        cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+                    val downloadProgress = ((bytesDownloaded * 100f) / bytesTotal)
+                    if (downloadProgress != lastDownloadProgress) {
+                        lastDownloadProgress = downloadProgress
+                        withContext(Dispatchers.Main) {
+                            onProgress?.invoke(downloadProgress.toInt())
+                        }
+                    }
+                    if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                        withContext(Dispatchers.Main) {
+                            onProgress?.invoke(100)
+                        }
+                        break
+                    } else if (status == DownloadManager.STATUS_FAILED) {
+                        Toast.makeText(requireContext(), "fail, try again!", Toast.LENGTH_SHORT)
+                            .show()
+                        break
+                    }
+                    delay(1000)
+                }
+                cursor.close()
+            }
+            withContext(Dispatchers.Main) { installApp(apkFile) }
+        }
     }
 
     override fun cancelDownload(downloadId: Long) {
@@ -165,7 +164,7 @@ class AppListFragment : Fragment(), IAppListFragment {
     }
 
     @SuppressLint("Range")
-    override fun cancelAll(){
+    override fun cancelAll() {
         val query = DownloadManager.Query()
         query.setFilterByStatus(DownloadManager.STATUS_RUNNING)
         val cursor = downloadManager.query(query)

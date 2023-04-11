@@ -65,6 +65,20 @@ class AppListViewModel : ViewModel() {
                 _appList.postValue(Resource.Error("Something wrong"))
             }
         }
+    }
+
+    fun getMockTest(env: String) {
+        val result: ArrayList<AppList> = ArrayList()
+        result.add(
+            AppList(
+                appName = "test.apk",
+                appUrl = "https://github.com/jatuporndev/covid19TH_app/releases/download/v1/covid19-th.apk",
+                sizeBytes = 100000,
+                createDate = "test 5 5"
+            )
+        )
+        _appList.postValue(Resource.Success(result))
+
 
     }
 }

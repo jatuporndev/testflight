@@ -7,11 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ntbx.android.test.flight.fragment.models.AppList
 import com.ntbx.android.test.flight.util.Resource
-import com.ntbx.android.test.flight.util.Util
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class InfoViewModel : ViewModel() {
@@ -25,7 +22,7 @@ class InfoViewModel : ViewModel() {
             try {
                 _appList.postValue(Resource.Loading())
                 var t = 0L
-                val tempAppList : ArrayList<AppList> = ArrayList()
+                val tempAppList: ArrayList<AppList> = ArrayList()
                 val externalStorageDirectory = context.getExternalFilesDir(null).toString()
                 val rootDirectory = File(externalStorageDirectory)
                 val files = rootDirectory.listFiles()
@@ -33,8 +30,13 @@ class InfoViewModel : ViewModel() {
                     t += file.length()
                     tempAppList.add(AppList(appName = file.name, sizeBytes = file.length()))
                 }
-                _appList.postValue(Resource.Success(tempAppList))
-            }catch (_:Exception) {
+                if (tempAppList.isNotEmpty()) {
+                    _appList.postValue(Resource.Success(tempAppList))
+                } else {
+                    _appList.postValue(Resource.Error("empty"))
+                }
+
+            } catch (_: Exception) {
                 _appList.postValue(Resource.Error("exception"))
             }
         }

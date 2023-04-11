@@ -10,6 +10,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.ntbx.android.test.flight.fragment.models.AppList
 import com.ntbx.android.test.flight.util.Resource
+import com.ntbx.android.test.flight.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -43,7 +44,8 @@ class AppListViewModel : ViewModel() {
                                     AppList(
                                         appName = item.name,
                                         appUrl = downloadUrl,
-                                        sizeBytes = sizeBytes
+                                        sizeBytes = sizeBytes,
+                                        createDate = Util.getFormatTime(metadata.creationTimeMillis)
                                     )
                                 )
                                 counter++

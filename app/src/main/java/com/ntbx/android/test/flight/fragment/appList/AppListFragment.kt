@@ -3,21 +3,20 @@ package com.ntbx.android.test.flight.fragment.appList
 import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
+import com.ntbx.android.test.flight.MainActivity
 import com.ntbx.android.test.flight.databinding.FragmentAppListBinding
-import com.ntbx.android.test.flight.fragment.models.AppList
+import com.ntbx.android.test.flight.models.AppList
 import com.ntbx.android.test.flight.util.Resource
 import com.ntbx.android.test.flight.util.Util.formatKey
 import kotlinx.coroutines.*
@@ -139,28 +138,12 @@ class AppListFragment : Fragment(), IAppListFragment {
                 }
                 cursor.close()
             }
-            withContext(Dispatchers.Main) { installApp(apkFile) }
+            withContext(Dispatchers.Main) { MainActivity.mainActivity.installApp(apkFile) }
         }
     }
 
     override fun cancelDownload(downloadId: Long) {
         downloadManager.remove(downloadId)
-    }
-
-    override fun installApp(apkFile: File) {
-        try {
-            val apkUri = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.provider",
-                apkFile
-            )
-            val intent = Intent(Intent.ACTION_INSTALL_PACKAGE)
-            intent.data = apkUri
-            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            requireActivity().startActivity(intent)
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Installing Failure", Toast.LENGTH_SHORT).show()
-        }
     }
 
     @SuppressLint("Range")

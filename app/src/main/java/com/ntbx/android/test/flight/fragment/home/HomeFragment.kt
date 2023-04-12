@@ -44,7 +44,7 @@ class HomeFragment : Fragment(){
         super.onResume()
         try {
             AppListFragment.appListFragment.cancelAll()
-        }catch (e : Exception){}
+        } catch (_: Exception){}
 
     }
 }

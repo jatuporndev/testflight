@@ -1,4 +1,4 @@
-package com.ntbx.android.test.flight.fragment.models
+package com.ntbx.android.test.flight.models
 
 data class AppList(
     var appName :String = "",

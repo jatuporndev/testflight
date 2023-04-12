@@ -6,5 +6,4 @@ interface IAppListFragment {
     fun downloadFile(url: String, appName: String, onProgress: ((Int) -> Unit)? = null)
     fun cancelDownload(downloadId: Long)
     fun cancelAll()
-    fun installApp(apkFile: File)
 }

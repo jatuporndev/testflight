@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ntbx.android.test.flight.MainActivity
 import com.ntbx.android.test.flight.R
-import com.ntbx.android.test.flight.databinding.CardAppListBinding
 import com.ntbx.android.test.flight.databinding.CardAppListV2Binding
-import com.ntbx.android.test.flight.fragment.models.AppList
-import com.ntbx.android.test.flight.fragment.models.DownloadState
+import com.ntbx.android.test.flight.models.AppList
+import com.ntbx.android.test.flight.models.DownloadState
 import com.ntbx.android.test.flight.util.Util
 import java.io.File
 
@@ -38,13 +38,13 @@ class AppListAdapter(val context: Context) :
             txtDate.text = data.createDate
             if (data.appName.endsWith(".apk")) {
                 if (apkFile.exists()) {
-                    btnDownload.text = "Update"
-                    dowloadStatus.text = "Downloaded"
+                    btnDownload.text = "Download Again"
+                    downloadStatus.text = "Downloaded"
                     iconAndroid.setImageResource(R.drawable.ic_baseline_android_green)
                     updateUI(holder.binding, DownloadState.DOWNLOADED)
                 } else {
                     btnDownload.text = "GET"
-                    dowloadStatus.text = "$sizeMb MB"
+                    downloadStatus.text = "$sizeMb MB"
                     iconAndroid.setImageResource(R.drawable.ic_baseline_android_24)
                 }
             } else {
@@ -59,7 +59,7 @@ class AppListAdapter(val context: Context) :
                     appName = data.appName
                 ) { progress ->
                     updateUI(holder.binding, DownloadState.DOWNLOADING)
-                    dowloadStatus.text = "${progress}% of $sizeMb MB"
+                    downloadStatus.text = "${progress}% of $sizeMb MB"
                     if (progress > 99) {
                         updateUI(holder.binding, DownloadState.INSTALL)
                         notifyItemChanged(position)
@@ -68,7 +68,7 @@ class AppListAdapter(val context: Context) :
             }
 
             btnInstall.setOnClickListener {
-                appListFragment.installApp(apkFile)
+                MainActivity.mainActivity.installApp(apkFile)
             }
 
             btnCancel.setOnClickListener {
@@ -80,7 +80,6 @@ class AppListAdapter(val context: Context) :
             }
         }
     }
-
 
     private fun updateUI(binding: CardAppListV2Binding, state: DownloadState) {
         when (state) {

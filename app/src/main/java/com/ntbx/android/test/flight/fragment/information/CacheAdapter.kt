@@ -6,11 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ntbx.android.test.flight.MainActivity
 import com.ntbx.android.test.flight.databinding.CardAppTempBinding
-import com.ntbx.android.test.flight.fragment.models.AppList
+import com.ntbx.android.test.flight.models.AppCache
 import com.ntbx.android.test.flight.util.Util
 
-class CacheAdapter : ListAdapter<AppList, CacheAdapter.ViewHolder>(MyDiffItemCallback()) {
+class CacheAdapter : ListAdapter<AppCache, CacheAdapter.ViewHolder>(MyDiffItemCallback()) {
     class ViewHolder(val binding: CardAppTempBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -24,14 +25,18 @@ class CacheAdapter : ListAdapter<AppList, CacheAdapter.ViewHolder>(MyDiffItemCal
             txtTempName.text = data.appName
             txtTempSize.text = "${Util.getSizeMb(data.sizeBytes)} MB"
         }
+
+        holder.binding.txtBtnInstall.setOnClickListener {
+            data.appFile?.let { file -> MainActivity.mainActivity.installApp(file) }
+        }
     }
 
-    internal class MyDiffItemCallback : DiffUtil.ItemCallback<AppList>() {
-        override fun areItemsTheSame(oldItem: AppList, newItem: AppList): Boolean {
+    internal class MyDiffItemCallback : DiffUtil.ItemCallback<AppCache>() {
+        override fun areItemsTheSame(oldItem: AppCache, newItem: AppCache): Boolean {
             return oldItem.appName == newItem.appName
         }
 
-        override fun areContentsTheSame(oldItem: AppList, newItem: AppList): Boolean {
+        override fun areContentsTheSame(oldItem: AppCache, newItem: AppCache): Boolean {
             return oldItem == newItem
         }
     }

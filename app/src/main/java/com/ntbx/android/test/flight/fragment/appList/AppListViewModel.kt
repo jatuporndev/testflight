@@ -1,6 +1,5 @@
 package com.ntbx.android.test.flight.fragment.appList
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,14 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
-import com.ntbx.android.test.flight.fragment.models.AppList
+import com.ntbx.android.test.flight.models.AppList
 import com.ntbx.android.test.flight.util.Resource
 import com.ntbx.android.test.flight.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import java.io.File
-import java.math.RoundingMode
 
 class AppListViewModel : ViewModel() {
 

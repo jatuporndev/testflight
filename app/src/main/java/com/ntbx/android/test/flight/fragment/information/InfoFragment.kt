@@ -52,7 +52,7 @@ class InfoFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun getSizeCache() {
-        infoViewModel.appList.observe(viewLifecycleOwner) {
+        infoViewModel.appCache.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Loading -> {
                     binding.loadingInfo.visibility = View.VISIBLE

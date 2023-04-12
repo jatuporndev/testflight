@@ -7,14 +7,26 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.provider.Settings.SettingNotFoundException
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.android.material.snackbar.Snackbar
 import com.ntbx.android.test.flight.databinding.ActivityMainBinding
+import java.io.File
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IMainActivity {
+
+    companion object {
+        @JvmStatic
+        lateinit var mainActivity: IMainActivity
+    }
+
+    init {
+        mainActivity = this
+    }
+
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +70,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             snack.show()
+        }
+    }
+
+    override fun installApp(apkFile: File) {
+        try {
+            val apkUri = FileProvider.getUriForFile(
+                this,
+                "${this.packageName}.provider",
+                apkFile
+            )
+            val intent = Intent(Intent.ACTION_INSTALL_PACKAGE)
+            intent.data = apkUri
+            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Installing Failure", Toast.LENGTH_SHORT).show()
         }
     }
 }

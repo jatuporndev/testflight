@@ -59,7 +59,7 @@
             tools:text="jabba-dev18-000000.apk" />
 
         <TextView
-            android:id="@+id/dowloadStatus"
+            android:id="@+id/downloadStatus"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -78,7 +78,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginEnd="4dp"
             android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@+id/dowloadStatus"
+            app:layout_constraintEnd_toStartOf="@+id/downloadStatus"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/appName"
             app:layout_constraintTop_toBottomOf="@+id/appName"
@@ -95,7 +95,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dowloadStatus">
+            app:layout_constraintTop_toBottomOf="@+id/downloadStatus">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

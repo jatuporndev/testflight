@@ -9,6 +9,15 @@
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
+
+
+    <queries>
+        <package android:name="com.ntbx.external.ngernturbo" />
+        <package android:name="com.ntbx.external.ngernturbo.debug" />
+        <package android:name="com.ntbx.internal.ruammitr" />
+        <package android:name="com.ntbx.internal.ruammitr.debug" />
+    </queries>
 
     <application
         android:allowBackup="true"

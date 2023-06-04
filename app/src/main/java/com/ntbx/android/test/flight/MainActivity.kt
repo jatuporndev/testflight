@@ -1,6 +1,9 @@
 package com.ntbx.android.test.flight
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -12,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
 import com.google.android.material.snackbar.Snackbar
+import com.ntbx.android.test.flight.customView.HandleUpdateSheet
 import com.ntbx.android.test.flight.databinding.ActivityMainBinding
 import java.io.File
 
@@ -75,17 +79,61 @@ class MainActivity : AppCompatActivity(), IMainActivity {
 
     override fun installApp(apkFile: File) {
         try {
-            val apkUri = FileProvider.getUriForFile(
-                this,
-                "${this.packageName}.provider",
-                apkFile
-            )
-            val intent = Intent(Intent.ACTION_INSTALL_PACKAGE)
-            intent.data = apkUri
-            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            startActivity(intent)
+            val packageName = getPackageNameFromApk(apkFile)
+            if (packageName != null) {
+                if (this.isPackageInstalled(packageName)) {
+                    uninstallApp(packageName)
+                } else {
+                    val apkUri = FileProvider.getUriForFile(
+                        this,
+                        "${this.packageName}.provider",
+                        apkFile
+                    )
+                    val intent = Intent(Intent.ACTION_INSTALL_PACKAGE)
+                    intent.data = apkUri
+                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    startActivity(intent)
+                }
+            }
         } catch (e: Exception) {
             Toast.makeText(this, "Installing Failure", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun getPackageNameFromApk(apkFile: File): String? {
+        val packageManager = applicationContext.packageManager
+        val packageInfo: PackageInfo? = packageManager.getPackageArchiveInfo(apkFile.path, 0)
+        return packageInfo?.packageName
+    }
+
+    private fun uninstallApp(packageName: String) {
+        val bottomSheetDialogFragment = HandleUpdateSheet(this)
+        bottomSheetDialogFragment
+            .setTitle(getAppNameFromPackage(packageName))
+            .onUnInstallButtonClick(object : HandleUpdateSheet.ClickListener {
+                override fun click() {
+                    val uninstallUri = Uri.parse("package:$packageName")
+                    val intent = Intent(Intent.ACTION_UNINSTALL_PACKAGE, uninstallUri)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                }
+            })
+            .show(supportFragmentManager, "bottomSheetDialogFragment")
+
+    }
+
+    private fun Context.isPackageInstalled(packageName: String): Boolean {
+        return try {
+            packageManager.getPackageInfo(packageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
+
+    private fun getAppNameFromPackage(packageName: String): String {
+        val packageManager: PackageManager = this.packageManager
+        val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
+        return packageManager.getApplicationLabel(applicationInfo).toString()
     }
 }

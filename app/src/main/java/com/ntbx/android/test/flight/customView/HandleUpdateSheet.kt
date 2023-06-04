@@ -22,20 +22,18 @@ class HandleUpdateSheet(context: Context) : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    fun onInstallButtonClick(
-        @Nullable listener: ClickListener
-    ): HandleUpdateSheet {
-        binding.btnInstall.setOnClickListener {
-            listener.click()
-        }
+    fun setTitle(appName: String) : HandleUpdateSheet {
+        binding.txtTitle.text = "$appName is already installed."
         return this
     }
 
-    fun onUpdateButtonClick(
+
+    fun onUnInstallButtonClick(
         @Nullable listener: ClickListener
     ): HandleUpdateSheet {
-        binding.btnUpdate.setOnClickListener {
+        binding.btnUnInstall.setOnClickListener {
             listener.click()
+            this.dismiss()
         }
         return this
     }
